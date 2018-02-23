@@ -1,0 +1,23 @@
+#' Determine the absolute height of the provided datetime for given location.
+#'
+#' This relies on the xtide library to determine the tide statistics
+#' for the specified time and location.
+#'
+#' @param d a POSIXct value representing the datetime value to be passed to xtide
+#' @param location string representing the station location as expected by xtide
+#' @return height in meters
+#' @export
+#' @examples
+#' #no examples yet
+GetTideHeight <-
+function(d,location) {
+	end<-d+60
+	begin<-format(d,format="%Y-%m-%d %H:%M:%S",tz="GMT")
+	end<-format(end,format="%Y-%m-%d %H:%M:%S",tz="GMT")
+	tide_csv<-read.csv(pipe(
+					paste("tide -z -u m -em pSsMm -f c -m m -l \"",location,
+							"\" -b '",begin,"' -e '",end,"'",sep="")),header=FALSE)
+	height<-tide_csv[1,4]
+	return(height)
+}
+

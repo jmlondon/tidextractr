@@ -1,0 +1,18 @@
+Package: tidextractr
+Version: 0.0.0.9000
+Title: Extraction of Tidal Values in R
+Description: This package provides a basic interface with the XTide library
+  for estimation of tidal covariates. The package was developed to support analysis
+  of harbor seal aerial survey and haul-out behavior in Alaska. However, use is
+  not limited to this situation. The package does not include the XTide library and,
+  thus, the library and command line tool must be installed. A vignette will provide
+  some guidance for installation. Users may wish to investigate the rtide package
+  as an alternative that includes native support for some of the station locations.
+  Special thanks and attribution to David Flater for development and support of
+  the XTide library (http://www.flaterco.com/xtide/xtide.html).
+Authors@R: person("Josh", "London", email = "josh.london@noaa.gov", role = c("aut", "cre"))
+License: CC0
+Encoding: UTF-8
+LazyData: true
+ByteCompile: true
+RoxygenNote: 6.0.1
