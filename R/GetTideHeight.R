@@ -11,13 +11,22 @@
 #' #no examples yet
 GetTideHeight <-
 function(d,location) {
-	end<-d+60
-	begin<-format(d,format="%Y-%m-%d %H:%M:%S",tz="GMT")
-	end<-format(end,format="%Y-%m-%d %H:%M:%S",tz="GMT")
-	tide_csv<-read.csv(pipe(
-					paste("tide -z -u m -em pSsMm -f c -m m -l \"",location,
-							"\" -b '",begin,"' -e '",end,"'",sep="")),header=FALSE)
-	height<-tide_csv[1,4]
+	end <- d + 60
+	begin <- format(d,format = "%Y-%m-%d %H:%M:%S",tz = "GMT")
+	end <- format(end,format = "%Y-%m-%d %H:%M:%S",tz = "GMT")
+	tide_csv <- readr::read_csv(
+	  paste0(
+	  system2("tide",
+	          args = paste("-z -u m -em pSsMm -f c -m m -l \"",location,
+	                       "\" -b '",begin,"' -e '",end,"'",sep = ""),
+	          stdout = TRUE,
+	          stderr = FALSE),"\n"),
+	  col_names = FALSE
+	)
+	# tide_csv<-read.csv(pipe(
+	# 				paste("tide -z -u m -em pSsMm -f c -m m -l \"",location,
+	# 						"\" -b '",begin,"' -e '",end,"'",sep="")),header=FALSE)
+	height <- tide_csv[[1,4]]
 	return(height)
 }
 

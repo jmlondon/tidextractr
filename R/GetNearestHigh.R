@@ -15,18 +15,22 @@ function(d,location) {
 	end<-format(end,format="%Y-%m-%d %H:%M:%S",tz="GMT")
 	begin<-d-(3600*12)
 	begin<-format(begin,format="%Y-%m-%d %H:%M:%S",tz="GMT")
-	tides<-read.csv(pipe(
-					paste("tide -z -u m -em pSsMm -f c -l \"",location,
-							"\" -b '",begin,"' -e '",end,"'",sep="")),
-							header=FALSE)
-	tides<-tides[tides$V5=="High Tide",]
-	tides$V6<-paste(tides$V2,tides$V3)
-	tides$V6<-as.POSIXct(tides$V6,format="%Y-%m-%d %I:%M %p",tz="GMT")
-	tide<-tides[which.min(abs(difftime(d,tides$V6,units="secs"))),]
+	tmp.csv <- tempfile()
+	system2("tide",
+	        args = paste("-z -u m -em pSsMm -f c -l \"",location,
+							"\" -b '",begin,"' -e '",end,"'",sep=""),
+							stdout = tmp.csv,
+							stderr = FALSE)
+	tides <- readr::read_csv(tmp.csv,col_names = FALSE)
+	unlink(tmp.csv)
+	tides<-tides[tides$X5=="High Tide",]
+	tides$X6<-paste(tides$X2,tides$X3)
+	tides$X6<-as.POSIXct(tides$X6,format="%Y-%m-%d %I:%M %p",tz="GMT")
+	tide<-tides[which.min(abs(difftime(d,tides$X6,units="secs"))),]
 	tide_list<-list(height=NA,time=NA)
 	if(nrow(tide)>0){
-		tide_list<-list(height=strsplit(as.character(tide$V4)," ")[[1]][1],
-		time=tide$V6)
+		tide_list<-list(height=strsplit(as.character(tide$X4)," ")[[1]][1],
+		time=tide$X6)
 	}
 	return(tide_list)
 }
