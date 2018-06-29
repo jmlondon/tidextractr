@@ -21,8 +21,15 @@ function(d,location) {
 							"\" -b '",begin,"' -e '",end,"'",sep=""),
 							stdout = tmp.csv,
 							stderr = FALSE)
-	tides <- readr::read_csv(tmp.csv,col_names = FALSE)
+	tides <- readr::read_csv(tmp.csv,
+	                         col_names = FALSE,
+	                         col_types = "cDccc")
 	unlink(tmp.csv)
+	if (nrow(tides) == 0) {
+	  warning(paste("No tide statistics returned for",
+	                location,"at",d))
+	  return(NULL)
+	}
 	tides<-tides[tides$X5=="High Tide",]
 	tides$X6<-paste(tides$X2,tides$X3)
 	tides$X6<-as.POSIXct(tides$X6,format="%Y-%m-%d %I:%M %p",tz="GMT")
